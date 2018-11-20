@@ -1,7 +1,9 @@
 [//]: # (Image References)
 
-[image1]: https://user-images.githubusercontent.com/10624937/43851024-320ba930-9aff-11e8-8493-ee547c6af349.gif "Trained Agent"
-[image2]: https://user-images.githubusercontent.com/10624937/43851646-d899bf20-9b00-11e8-858c-29b5c2c94ccc.png "Crawler"
+[image1]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p2_continuous-control/images/tensorboard_p2Continuous.gif "Tensor board"
+[image2]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p2_continuous-control/images/smart_agent.gif "Trained Agent"
+[image3]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p2_continuous-control/images/avg_agent.png "reward_agent"
+[image4]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p2_continuous-control/images/avg_rolling(100).png "rolling_mean"
 
 
 # Project 2: Continuous Control
@@ -109,7 +111,10 @@ The observation space consists of 33 variables corresponding to position, rotati
 ![Tensor board][image1]
 * To run the TensorBoard, open a new terminal and run the command below. Then, open http://localhost:6006/ on your web browser.
 `$ tensorboard --logdir='./logs' --port=6006`
-
+### Average Reward (Episode score)
+![reward_agent][image3]
+### Rolling Mean (100 episodes)
+![rolling_mean][image4]
 
 
 ### Future Work
