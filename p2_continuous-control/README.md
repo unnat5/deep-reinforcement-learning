@@ -104,6 +104,7 @@ The observation space consists of 33 variables corresponding to position, rotati
 2. Place the file in the DRLND GitHub repository, in the `p2_continuous-control/` folder, and unzip (or decompress) the file. 
 
 3. To see a smart agent in your local machine run this code:
+<br>`$ python3 smart_agent.py`
     
 
 
