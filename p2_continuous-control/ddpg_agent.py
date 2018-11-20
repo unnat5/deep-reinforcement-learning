@@ -12,12 +12,12 @@ import torch.optim as optim
 
 ##========== HYPERPARAMETER ============##
 BUFFER_SIZE = int(1e5)    # replay buffer
-BATCH_SIZE = 64         # minibatch size
+BATCH_SIZE = 128        # minibatch size
 GAMMA = 0.99              # discounting factor
 TAU = 1e-3                # soft update of traget parameters
-LR_ACTOR = 1e-4           # learning rate for actor
+LR_ACTOR = 1e-3           # learning rate for actor
 LR_CRITIC = 1e-3          # learning rate for critic
-WEIGHT_DECAY = 0          # L2 weight weight decay
+WEIGHT_DECAY = 0.       # L2 weight weight decay
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -55,13 +55,21 @@ class Agent():
         # Replay Buffer
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
         
+        self.counter = 0
+        
+       # Make sure target is with the same weight as the source found on slack
+        self.hard_update(self.actor_target, self.actor_local)
+        self.hard_update(self.critic_target, self.critic_local)
+        
     def step(self, state, action, reward, next_state, done):
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward 
-        self.memory.add(state, action, reward, next_state, done)
+        for state,action,reward,next_state,done in zip(state, action, reward, next_state, done):
+            self.memory.add(state, action, reward, next_state, done)
+            self.counter+=1
         
         # Learn, if enough samples are available in memory
-        if len(self.memory) > BATCH_SIZE:
+        if len(self.memory) > BATCH_SIZE and self.counter%10==0: 
             experience = self.memory.sample()
             self.learn(experience, GAMMA)
             
@@ -114,7 +122,8 @@ class Agent():
         
         ## Minize the loss
         self.critic_optimizer.zero_grad()
-        critic_loss.backward(retain_graph=True)
+        critic_loss.backward()
+#         torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
         self.critic_optimizer.step()
         
         
@@ -122,17 +131,17 @@ class Agent():
         # ============================== Update Actor =================================#
         ## Compute actor loss
         action_pred  = self.actor_local(state)
-#         actor_loss = -(self.critic_local(state,action_pred).mean())
+        actor_loss = -(self.critic_local(state,action_pred).mean())
         ## Calculating Advantage!!
         #print(Q_targets.size(),self.critic_local(state,action_pred).size())
-        actor_loss = -(torch.mean(Q_targets-self.critic_local(state,action_pred)))
+#         actor_loss = -(torch.mean(Q_targets-self.critic_local(state,action_pred)))
         ## The reason we can calculate loss this way and we don't have
         ## to collect trajector ( noisy Monte carlo estimation; cum_reward/reward_future)
         ## is action space is continuous and differentiable and we calculate
         ## gradient w.r.t to q_value which is estimated by CRITIC.
         # Minimize loss
         self.actor_optimizer.zero_grad()
-        actor_loss.backward(retain_graph=True)
+        actor_loss.backward()
 #         del actor_loss
         self.actor_optimizer.step()
         
@@ -154,12 +163,17 @@ class Agent():
         for target_param,local_param in zip(target_model.parameters(),
                                            local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1-tau)*target_param.data)
+            ## add noise to weights
+#             local_param.data.copy_(local_param.data + self.noise.sample()[3])
+    def hard_update(self, target, source):
+        for target_param, param in zip(target.parameters(), source.parameters()):
+            target_param.data.copy_(param.data)
     
     
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
     
-    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
+    def __init__(self, size, seed, mu=0.01, theta=0.15, sigma=0.2):
         """Initialize parameters and noise process."""
         self.mu = mu*np.ones(size)
         self.theta = theta
@@ -174,7 +188,7 @@ class OUNoise:
     def sample(self):
         """Update internal state and return it as a noise sample"""
         x = self.state
-        dx = self.theta*(self.mu-x) + self.sigma*np.array([random.random() for i in range(len(x))])
+        dx = self.theta*(self.mu-x) + self.sigma*np.array([random.gauss(0., 1.) for i in range(len(x))])
         self.state =x +dx
         return self.state
     
