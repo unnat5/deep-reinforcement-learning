@@ -10,6 +10,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+## code is inspired from https://github.com/udacity/deep-reinforcement-learning/tree/master/ddpg-pendulum
+
 ##========== HYPERPARAMETER ============##
 BUFFER_SIZE = int(1e5)    # replay buffer
 BATCH_SIZE = 128        # minibatch size

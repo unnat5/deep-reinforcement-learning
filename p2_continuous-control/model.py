@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+## code is inspired from https://github.com/udacity/deep-reinforcement-learning/tree/master/ddpg-pendulum
+
 
 def hidden_init(layer):
     """
