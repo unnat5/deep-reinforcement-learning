@@ -1,5 +1,8 @@
 from unityagents import UnityEnvironment
 import numpy as np
+import sys
+
+condition = sys.stdin.readline().split()
 
 env = UnityEnvironment(file_name='./Reacher.app')
 
@@ -15,10 +18,13 @@ num_agents=20
 # print(action_size,state_size)
 
 import torch
-agent.actor_local.load_state_dict(torch.load('checkpoint_actor.pth'))
-agent.critic_local.load_state_dict(torch.load('checkpoint_critic.pth'))
-agent.actor_target.load_state_dict(torch.load('checkpoint_actor_target.pth'))
-agent.critic_target.load_state_dict(torch.load('checkpoint_critic_target.pth'))
+if condition[0] == "random":
+    pass
+else:
+    agent.actor_local.load_state_dict(torch.load('checkpoint_actor.pth'))
+    agent.critic_local.load_state_dict(torch.load('checkpoint_critic.pth'))
+    agent.actor_target.load_state_dict(torch.load('checkpoint_actor_target.pth'))
+    agent.critic_target.load_state_dict(torch.load('checkpoint_critic_target.pth'))
 
 
 env_info = env.reset(train_mode=False)[brain_name]     # reset the environment    
