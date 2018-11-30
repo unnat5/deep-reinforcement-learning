@@ -1,7 +1,7 @@
 [//]: # (Image References)
 
 [image1]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p3_collab-compet/tennis.gif "Trained Agent"
-[image2]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p3_collab-compet/plot_reward.png "Reward Plot"
+[image2]: https://github.com/unnat5/deep-reinforcement-learning/blob/master/p3_collab-compet/reward_plot.png?raw=true "Reward Plot"
 
 
 # Project 3: Collaboration and Competition
